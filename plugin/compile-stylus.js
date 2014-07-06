@@ -53,7 +53,7 @@ var compile = function(compileStep, future) {
     compileStep.error({
       message: "Stylus compiler error: " + e.message
     });
-    return future.return(false);
+    return future && future.return(false);
   }
 
   var cache = Storage.getItem('cache');
@@ -65,7 +65,7 @@ var compile = function(compileStep, future) {
     data: css
   });
 
-  future.return(true);
+  future && future.return(true);
 }
 
 Plugin.registerSourceHandler("styl", function (compileStep) {
@@ -78,24 +78,25 @@ Plugin.registerSourceHandler("styl", function (compileStep) {
     return;
   }
 
-  var future = new Future;
+  // var future = new Future;
 
-  fs.stat(compileStep.inputPath, function(err, stats) {
-    var doCompile = true;
-    var filename = compileStep.inputPath;
-    var key = filename + "|" + compileStep.arch;
+  // fs.stat(compileStep.inputPath, function(err, stats) {
+  //   var doCompile = true;
+  //   var filename = compileStep.inputPath;
+  //   var key = filename + "|" + compileStep.arch;
 
-    if (!wasModified(key, stats)) doCompile = false;
+  //   if (!wasModified(key, stats)) doCompile = false;
 
-    if (doCompile) {
-      stats && (Mtimes[key] = stats.mtime);
-      compile(compileStep, future);
-    } else {
-      compileFromCache(compileStep, future);
-    }
-  });
+  //   if (doCompile) {
+  //     stats && (Mtimes[key] = stats.mtime);
+  //     compile(compileStep, future);
+  //   } else {
+  //     compileFromCache(compileStep, future);
+  //   }
+  // });
 
-  future.wait();
+  // future.wait();
+  compile(compileStep);
 });
 
 // Register import.styl files with the dependency watcher, without actually
